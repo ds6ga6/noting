@@ -96,7 +96,7 @@ with open(COMMAND_DICT, 'r', encoding='utf-8') as f:
 	modedict = json.load(f)
 
 
-def exec_block(block, sign=2, line_in_block=-1):
+def exec_block(block, sign=2):
 	assert re.match(sp_pattern_beg, block)
 	# get mode, command, iscontinued
 	match = re.search(sp_pattern_beg, block)
@@ -134,14 +134,14 @@ def exec_block(block, sign=2, line_in_block=-1):
 			func_name = cmddict[key]["func"]
 			lib = importlib.import_module(file)
 			func = getattr(lib, func_name)
-			context_new, line_in_block_new = func(command, context, line_in_block, attr)
+			context_new = func(command, context, attr)
 			isrun = True
 			break
 	if(not isrun):
 		if("default" in cmddict.keys()):
 			lib = importlib.import_module(cmddict["default"]["file"])
 			func = getattr(lib, cmddict["default"]["func"])
-			context_new, line_in_block_new = func(command, context, line_in_block, attr)
+			context_new = func(command, context, attr)
 		else:
 			text = 'Error: "' + command + '" is not a command in "' + mode + '" mode'
 			printInColor(text, "red")
@@ -154,11 +154,10 @@ def exec_block(block, sign=2, line_in_block=-1):
 	for key in attr.keys():
 		block_new += "\n@" + key + ": " + attr[key]
 	block_new += '\n' + context_new + string_end
-	return block_new, line_in_block_new
+	return block_new
 
 
 if(__name__=="__main__"):
-	line_current = args["lineNumber"] # number of line where user is editting
 	with open("main.md", "r", encoding='utf-8') as f:
 		data_new = ""
 		data_old = f.read()
@@ -169,26 +168,14 @@ if(__name__=="__main__"):
 			data_new += data_old
 			break
 		else:
-			# 确定 line_in_block
-			line_num1 = data_new.count('\n') + data_old.count('\n', 0, pos[0])
-			line_num2 = line_num1 + data_old.count('\n', pos[0], pos[1])
-			if(line_num1 < line_current < line_num2):
-				line_in_block = line_current - line_num1
-			else:
-				line_in_block = -1
 			# run exec_block
-			block_new, line_in_block_new = exec_block(data_old[pos[0]:pos[1]], sign=1, line_in_block=line_in_block)
+			block_new = exec_block(data_old[pos[0]:pos[1]], sign=1)
 			# 这里虽然 block 大部分还在 data_old 中，但开头的 '\n' 给 data_new 了，开头的 block 也就不会再被匹配了
 			data_new += data_old[:pos[0]] + '\n'
 			data_old = block_new[1:] + data_old[pos[1]:]
-			# 计算新的 line_current
-			if(line_in_block == -1): # line_current 
-				line_current = line_num1 + line_in_block_new
-			elif(line_current >= line_num2):
-				line_current += block_new.count('\n') - (line_num2 - line_num1)
 	
 	# 修改 main.md，并打开到 line_current 行
 	writeSecure(data_new, "main.md")
 	with open("main.md", 'w', encoding='utf-8') as f:
 		f.write(data_new)
-	os.system("code main.md:" + str(line_current))
+	os.system("code main.md")

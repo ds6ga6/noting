@@ -1,6 +1,6 @@
 
 import os
 
-def runcmd(command, context, line_in_block, attr):
+def runcmd(command, context, attr):
 	context_new = os.popen(command).read()
-	return context_new, 0
+	return context_new
