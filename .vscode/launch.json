@@ -1,0 +1,36 @@
+{
+	"configurations": [
+		{
+			"name": "Python: 当前文件",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"console": "integratedTerminal",
+			"cwd": "${fileDirname}"
+		},
+		{
+			"name": "Python: noting",
+			"type": "python",
+			"request": "launch",
+			"program": "noting.py",
+			"console": "integratedTerminal",
+			"cwd": "${workspaceFolder}",
+			// "cwd": "${fileDirname}",
+			//"postDebugTask": "${defaultBuildTask}",
+			"args": [
+				"${workspaceFolder}", 			//	/home/your-username/your-project
+				"${workspaceFolderBasename}", 	//	your-project
+				"${file}", 						//	/home/your-username/your-project/folder/file.ext
+				"${fileWorkspaceFolder}", 		//	/home/your-username/your-project
+				"${relativeFile}", 				//	folder/file.ext
+				"${relativeFileDirname}", 		//	folder
+				"${fileBasename}", 				//	file.ext
+				"${fileBasenameNoExtension}", 	//	file
+				"${fileDirname}", 				//	/home/your-username/your-project/folder
+				"${fileExtname}", 				//	.ext
+				"${lineNumber}", 				//	
+				"${pathSeparator}" 				//	/ on macOS or linux, \\ on Windows
+			]
+		}
+	]
+}

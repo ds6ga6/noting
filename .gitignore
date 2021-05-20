@@ -1,0 +1,12 @@
+*.md
+!README.md
+!readme.md
+
+*pycache*
+
+*.code-snippets
+.vscode/settings.json
+noting/temp/*
+
+*/test.py
+*/test/*

@@ -1,0 +1,8 @@
+{
+	"cmd":{
+		"default":{
+			"file": "runcmd",
+			"func": "runcmd"
+		}
+	}
+}
